@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparison Details</title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<header>
+    <h1>Comparison Details</h1>
+    <p>Complete PDF Comparison Information</p>
+</header>
+
+<div class="container">
+    <div class="card">
+
+        <h2>Comparison Information</h2>
+
+        <div class="result-item">
+            <h3>{{ record.file1 }} vs {{ record.file2 }}</h3>
+
+            <h2>{{ record.similarity }}%</h2>
+
+            <p><strong>Status:</strong> {{ record.status }}</p>
+
+            <p><strong>Date:</strong> {{ record.date }}</p>
+
+            <a href="/download-report/{{ record.id }}">
+                Download PDF Report
+            </a>
+        </div>
+
+        <br>
+
+        <a href="/history-page">Back to History</a>
+
+    </div>
+</div>
+
+</body>
+</html>

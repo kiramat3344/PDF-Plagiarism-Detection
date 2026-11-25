@@ -1,0 +1,267 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparison History</title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<header>
+    <h1>PDF Comparison History</h1>
+    <p>View Your Previous Comparison Results</p>
+</header>
+
+<div class="container">
+
+    <div class="card">
+
+        <h2>Previous Results</h2>
+
+
+<button id="clearHistory"
+        style="background:#dc2626; margin-bottom:15px;">
+    Clear All History
+</button>
+
+
+
+<!-- Search History -->
+
+<input
+    type="text"
+    id="searchHistory"
+    placeholder="Search PDF file name..."
+    style="
+        width: 100%;
+        padding: 12px;
+        margin: 15px 0;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        box-sizing: border-box;
+    "
+>
+
+
+        <div id="historyResults">Loading History...</div>
+
+        <br>
+
+        <a href="/">Back to Home</a>
+
+    </div>
+
+</div>
+
+<script>
+
+async function loadHistory() {
+
+    const container = document.getElementById("historyResults");
+
+    try {
+
+        const response = await fetch("/history");
+
+        if (!response.ok) {
+            throw new Error("History API failed");
+        }
+
+        const records = await response.json();
+
+        container.innerHTML = "";
+
+        if (records.length === 0) {
+            container.textContent = "No history found.";
+            return;
+        }
+
+        records.forEach(record => {
+
+            const card = document.createElement("div");
+            card.className = "result-item";
+
+            const heading = document.createElement("h3");
+            heading.textContent = record.file1 + " vs " + record.file2;
+
+            const percentage = document.createElement("div");
+            percentage.className = "similarity";
+            percentage.textContent = record.similarity + "%";
+
+            const status = document.createElement("p");
+            status.textContent = record.status;
+
+            const date = document.createElement("p");
+            date.textContent = "Date: " + record.date;
+
+            const download = document.createElement("a");
+
+            download.href = "/download-report/" + record.id;
+            download.textContent = "Download PDF Report";
+            download.style.display = "inline-block";
+            download.style.padding = "12px 18px";
+            download.style.background = "#16a34a";
+            download.style.color = "white";
+            download.style.borderRadius = "8px";
+            download.style.textDecoration = "none";
+            download.style.marginTop = "10px";
+
+            card.appendChild(heading);
+            card.appendChild(percentage);
+            card.appendChild(status);
+            card.appendChild(date);
+
+const details = document.createElement("a");
+
+details.href = "/comparison-details/" + record.id;
+details.textContent = "View Details";
+
+details.style.display = "inline-block";
+details.style.padding = "12px 18px";
+details.style.background = "#2563eb";
+details.style.color = "white";
+details.style.borderRadius = "8px";
+details.style.textDecoration = "none";
+details.style.marginTop = "10px";
+details.style.marginRight = "10px";
+
+card.appendChild(details);
+
+            card.appendChild(download);
+
+// Delete Button
+
+const deleteButton = document.createElement("button");
+
+deleteButton.textContent = "Delete";
+
+deleteButton.style.background = "#dc2626";
+deleteButton.style.marginLeft = "10px";
+
+deleteButton.addEventListener("click", async function () {
+
+    const confirmDelete = confirm(
+        "Are you sure you want to delete this record?"
+    );
+
+    if (!confirmDelete) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            "/delete-history/" + record.id,
+            {
+                method: "DELETE"
+            }
+        );
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert(data.message);
+            loadHistory();
+        } else {
+            alert(data.message);
+        }
+
+    } catch (error) {
+
+        alert("Delete failed. Please try again.");
+
+    }
+
+});
+
+card.appendChild(deleteButton);
+
+
+            container.appendChild(card);
+
+        });
+
+    } catch (error) {
+
+        container.textContent = "Error loading history. Please refresh.";
+
+        console.error(error);
+
+    }
+
+}
+
+document.getElementById("clearHistory").addEventListener("click", async function () {
+
+    const confirmDelete = confirm(
+        "Are you sure you want to delete ALL history?"
+    );
+
+    if (!confirmDelete) {
+        return;
+    }
+
+    try {
+        const response = await fetch("/clear-history", {
+            method: "DELETE"
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert(data.message);
+            loadHistory();
+        } else {
+            alert("Unable to clear history.");
+        }
+
+    } catch (error) {
+        alert("Something went wrong!");
+    }
+
+});
+
+
+loadHistory();
+
+
+// Search History
+
+const searchInput = document.getElementById("searchHistory");
+
+searchInput.addEventListener("input", function () {
+
+    const searchText = this.value.trim().toLowerCase();
+
+    const cards = document.querySelectorAll(
+        "#historyResults .result-item"
+    );
+
+    cards.forEach(card => {
+
+        const file1 = card.querySelector("h3")
+            .textContent.toLowerCase();
+
+        const file2 = card.querySelector("h3")
+            .textContent.toLowerCase();
+
+        const matches =
+            file1.includes(searchText) ||
+            file2.includes(searchText);
+
+        card.style.display = matches ? "" : "none";
+
+    });
+
+});
+
+
+</script>
+
+</body>
+</html>

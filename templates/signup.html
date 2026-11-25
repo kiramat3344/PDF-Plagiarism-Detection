@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | PDF Checker</title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="auth-page">
+
+    <div class="auth-card">
+
+        <div class="auth-logo">PDF</div>
+
+        <h1>Create Account</h1>
+
+        <p class="auth-subtitle">
+            Join PDF Plagiarism Detection System
+        </p>
+
+        {% if error %}
+            <p class="auth-error">{{ error }}</p>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('signup') }}"
+              onsubmit="return checkPasswords()">
+
+            <label>Username</label>
+            <input
+                type="text"
+                name="username"
+                placeholder="Enter your username"
+                required
+            >
+
+            <label>Email Address</label>
+            <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                required
+            >
+
+            <label>Password</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Create password (8 characters minimum)"
+                minlength="8"
+                required
+            >
+
+            <label>Confirm Password</label>
+            <input
+                type="password"
+                id="confirm_password"
+                placeholder="Confirm your password"
+                required
+            >
+
+            <p id="password-error" class="auth-error"
+               style="display:none;">
+                Passwords do not match!
+            </p>
+
+            <button type="submit" class="auth-button">
+                Create Account
+            </button>
+
+        </form>
+
+        <div class="auth-footer">
+            Already have an account?
+            <a href="{{ url_for('login') }}">Login Here</a>
+        </div>
+
+    </div>
+
+    <script>
+        function checkPasswords() {
+            const password =
+                document.getElementById("password").value;
+
+            const confirmPassword =
+                document.getElementById("confirm_password").value;
+
+            const error =
+                document.getElementById("password-error");
+
+            if (password !== confirmPassword) {
+                error.style.display = "block";
+                return false;
+            }
+
+            error.style.display = "none";
+            return true;
+        }
+    </script>
+
+</body>
+</html>
