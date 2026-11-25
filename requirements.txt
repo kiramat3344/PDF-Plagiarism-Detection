@@ -2,3 +2,4 @@ flask
 pymupdf
 scikit-learn
 reportlab
+psycopg[binary]
