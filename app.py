@@ -1,7 +1,6 @@
 
-
 ########################################################################
-
+import os
 import threading
 import uuid
 import random
@@ -26,9 +25,12 @@ app = Flask(__name__)
 # Store live comparison progress
 comparison_jobs = {}
 
-app.secret_key = "pdf_project_secret_key_2026"
-EMAIL_ADDRESS = "whbus5706@gmail.com"
-EMAIL_PASSWORD = "igsk cxwm spzi twhp"
+
+app.secret_key = os.environ.get("SECRET_KEY")
+
+EMAIL_ADDRESS = os.environ.get("EMAIL_ADDRESS")
+
+EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD")
 
 UPLOAD_FOLDER = "uploads"
 DATABASE_FOLDER = "database"
